@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>Alles Gute zum 15. Geburtstag, Fietje!</title>
+    <meta name="description" content="Eine interaktive Geburtstagsüberraschung für Fietje. Spiele den Fietje-Cup, entdecke die Galerie und hinterlasse einen Gruß im Chat!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Outfit für modernen Text, Kanit für fette Sport-Schriftzüge -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,700;0,900;1,900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="logo">
+            <span class="logo-red">FIETJE</span><span class="logo-white">-CUP</span> <span class="badge">15</span>
+        </div>
+        <nav class="main-nav">
+            <button class="nav-btn active" data-slide="home" id="btn-home"><i class="fa-solid fa-house"></i> <span>Start</span></button>
+            <button class="nav-btn" data-slide="meaning" id="btn-meaning"><i class="fa-solid fa-award"></i> <span>Name</span></button>
+            <button class="nav-btn" data-slide="gallery" id="btn-gallery"><i class="fa-solid fa-images"></i> <span>Galerie</span></button>
+            <button class="nav-btn" data-slide="games" id="btn-games"><i class="fa-solid fa-gamepad"></i> <span>Fietje-Cup</span></button>
+            <button class="nav-btn" data-slide="chat" id="btn-chat"><i class="fa-solid fa-comments"></i> <span>Chat</span></button>
+        </nav>
+    </header>
+
+    <!-- Main Content (Slides Container) -->
+    <main class="slides-container">
+
+        <!-- Slide 1: Home -->
+        <section class="slide active" id="slide-home">
+            <div class="hero-card">
+                <div class="hero-badge">15</div>
+                <div class="hero-content">
+                    <h1 class="glow-text">Alles Gute zum<br><span class="highlight-text">15. Geburtstag!</span></h1>
+                    <p class="hero-subtitle">Liebe Grüße aus Berlin von Schütts und Dietrichs.<br>Feiere deinen Geburtstag auch mit deinem Fietje-Cup.</p>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="window.app.switchSlide('games')"><i class="fa-solid fa-trophy"></i> Fietje-Cup spielen</button>
+                        <button class="btn btn-secondary" onclick="window.app.triggerConfetti()"><i class="fa-solid fa-wand-magic-sparkles"></i> Mehr Konfetti!</button>
+                    </div>
+                </div>
+            </div>
+            <div class="soccer-deco">
+                <i class="fa-solid fa-football"></i>
+            </div>
+        </section>
+
+        <!-- Slide 2: Namensbedeutung -->
+        <section class="slide" id="slide-meaning">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-book-open"></i> Die Bedeutung deines Namens</h2>
+                <p>Woher kommt der Name <strong>Fietje</strong> und was zeichnet ihn aus?</p>
+            </div>
+            <div class="meaning-grid">
+                <div class="meaning-card card-gradient-red">
+                    <div class="card-icon"><i class="fa-solid fa-hands-holding-peace"></i></div>
+                    <h3>Bedeutung</h3>
+                    <p class="large-text">„Der Friedliche“ / „Der Friedensreiche“</p>
+                    <p>Abgeleitet von althochdeutsch <strong>*fridu*</strong> (Friede, Schutz) und <strong>*rihhi*</strong> (mächtig, reich, Herrscher).</p>
+                </div>
+                <div class="meaning-card">
+                    <div class="card-icon"><i class="fa-solid fa-anchor"></i></div>
+                    <h3>Herkunft</h3>
+                    <p class="large-text">Niederdeutsch & Friesisch</p>
+                    <p>Fietje entstand als liebevolle Kose- und Kurzform von Friedrich (männlich) bzw. Friederike (weiblich) im norddeutschen und niederländischen Raum.</p>
+                </div>
+                <div class="meaning-card">
+                    <div class="card-icon"><i class="fa-solid fa-star"></i></div>
+                    <h3>Besonderheit</h3>
+                    <p class="large-text">Selten & Charmant</p>
+                    <p>Im Vergleich zur Variante „Fiete“ ist Fietje besonders selten und trägt einen sehr vertrauten, herzlichen Charakter.</p>
+                </div>
+                <div class="meaning-card">
+                    <div class="card-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                    <h3>Namenstage</h3>
+                    <p class="large-text">Mehrere Termine</p>
+                    <p>Da Fietje von Friedrich abstammt, gelten dessen Namenstage: z. B. <strong>3. März</strong>, <strong>8. Mai</strong>, <strong>18. Juli</strong> und <strong>29. November</strong>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Galerie -->
+        <section class="slide" id="slide-gallery">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-images"></i> Foto-Galerie</h2>
+                <p>20 unvergessliche Momente. Klicke auf ein Bild, um es zu vergrößern. Du kannst auch eigene Bilder hochladen!</p>
+                <div class="gallery-controls">
+                    <label for="gallery-upload" class="btn btn-secondary">
+                        <i class="fa-solid fa-upload"></i> Bilder hochladen (Vorschau)
+                    </label>
+                    <input type="file" id="gallery-upload" accept="image/*" multiple style="display: none;">
+                    <button class="btn btn-danger-outline" id="btn-reset-gallery" style="display: none;"><i class="fa-solid fa-trash"></i> Zurücksetzen</button>
+                </div>
+            </div>
+            
+            <div class="gallery-grid" id="gallery-container">
+                <!-- 20 Placeholders will be rendered here dynamically by app.js -->
+            </div>
+        </section>
+
+        <!-- Slide 4: Fietje-Cup -->
+        <section class="slide" id="slide-games">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-trophy"></i> Fietje-Cup Arena</h2>
+                <p>Hol dir die Trophäe! Wähle dein Lieblingsspiel und knacke den Highscore.</p>
+                <div class="game-selector">
+                    <button class="game-tab-btn active" id="tab-penalty" onclick="window.gameEngine.switchGame('penalty')">
+                        <i class="fa-solid fa-star"></i> Union: Eisern-Elfmeter
+                    </button>
+                    <button class="game-tab-btn" id="tab-keepup" onclick="window.gameEngine.switchGame('keepup')">
+                        <i class="fa-solid fa-circle-nodes"></i> Bayern: Mia-San-Header
+                    </button>
+                    <button class="game-tab-btn" id="tab-tennis" onclick="window.gameEngine.switchGame('tennis')">
+                        <i class="fa-solid fa-table-tennis-paddle-ball"></i> Tennis: Matchball
+                    </button>
+                    <button class="game-tab-btn" id="tab-hockey" onclick="window.gameEngine.switchGame('hockey')">
+                        <i class="fa-solid fa-hockey-puck"></i> Eishockey: Eis-Goalie
+                    </button>
+                </div>
+            </div>
+
+            <div class="game-arena-wrapper">
+                <!-- Game 1: Union Berlin Penalty Shootout -->
+                <div class="game-container active" id="game-penalty-container">
+                    <div class="game-hud">
+                        <div class="hud-item">Score: <span id="penalty-score" class="hud-val">0</span></div>
+                        <div class="hud-item">Tore: <span id="penalty-goals" class="hud-val">0/5</span></div>
+                        <div class="hud-item">Highscore: <span id="penalty-highscore" class="hud-val">0</span></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="penalty-canvas" width="600" height="400"></canvas>
+                        <div class="game-overlay" id="penalty-overlay">
+                            <div class="overlay-content">
+                                <h3 id="penalty-overlay-title">Eisern-Elfmeter</h3>
+                                <p id="penalty-overlay-desc">Schieße Tore für Union Berlin! Klicke im richtigen Moment auf das Tor, um den Ball am Torwart vorbeizuzirkeln.</p>
+                                <button class="btn btn-primary" onclick="window.gameEngine.startPenaltyGame()">Spiel starten</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls-help">
+                        <p><i class="fa-solid fa-mouse-pointer"></i> <strong>Steuerung:</strong> Klicke ins Tor, um dorthin zu schießen. Weiche dem reaktiven Torwart aus!</p>
+                    </div>
+                </div>
+
+                <!-- Game 2: Bayern Munich Header Challenge -->
+                <div class="game-container" id="game-keepup-container">
+                    <div class="game-hud">
+                        <div class="hud-item">Score: <span id="keepup-score" class="hud-val">0</span></div>
+                        <div class="hud-item">Leben: <span id="keepup-lives" class="hud-val">3</span></div>
+                        <div class="hud-item">Highscore: <span id="keepup-highscore" class="hud-val">0</span></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="keepup-canvas" width="600" height="400"></canvas>
+                        <div class="game-overlay" id="keepup-overlay">
+                            <div class="overlay-content">
+                                <h3 id="keepup-overlay-title">Mia-San-Header</h3>
+                                <p id="keepup-overlay-desc">Allianz Kopfball-Arena! Fange Fußbälle, Sterne und die Meisterschale auf. Weiche roten Karten aus!</p>
+                                <button class="btn btn-primary" onclick="window.gameEngine.startKeepUpGame()">Spiel starten</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls-help">
+                        <p><i class="fa-solid fa-arrows-left-right"></i> <strong>Steuerung:</strong> Bewege die Maus oder wische auf dem Bildschirm nach links und rechts, um den Spieler zu bewegen.</p>
+                    </div>
+                </div>
+
+                <!-- Game 3: Tennis Matchball -->
+                <div class="game-container" id="game-tennis-container">
+                    <div class="game-hud">
+                        <div class="hud-item">Score: <span id="tennis-score" class="hud-val">0</span></div>
+                        <div class="hud-item">Leben: <span id="tennis-lives" class="hud-val">3</span></div>
+                        <div class="hud-item">Highscore: <span id="tennis-highscore" class="hud-val">0</span></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="tennis-canvas" width="600" height="400"></canvas>
+                        <div class="game-overlay" id="tennis-overlay">
+                            <div class="overlay-content">
+                                <h3 id="tennis-overlay-title">Matchball</h3>
+                                <p id="tennis-overlay-desc">Halte die Tennis-Rally am Laufen! Triff die Bälle mit deinem Schläger und sammle Bonussterne.</p>
+                                <button class="btn btn-primary" onclick="window.gameEngine.startTennisGame()">Spiel starten</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls-help">
+                        <p><i class="fa-solid fa-arrows-left-right"></i> <strong>Steuerung:</strong> Maus oder Finger nach links und rechts bewegen. Grüne Bälle treffen, gelbe Sterne bringen Bonus.</p>
+                    </div>
+                </div>
+
+                <!-- Game 4: Ice Hockey Goalie -->
+                <div class="game-container" id="game-hockey-container">
+                    <div class="game-hud">
+                        <div class="hud-item">Score: <span id="hockey-score" class="hud-val">0</span></div>
+                        <div class="hud-item">Leben: <span id="hockey-lives" class="hud-val">3</span></div>
+                        <div class="hud-item">Highscore: <span id="hockey-highscore" class="hud-val">0</span></div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="hockey-canvas" width="600" height="400"></canvas>
+                        <div class="game-overlay" id="hockey-overlay">
+                            <div class="overlay-content">
+                                <h3 id="hockey-overlay-title">Eis-Goalie</h3>
+                                <p id="hockey-overlay-desc">Beschütze das Tor! Fange Pucks, sammle Pokale und weiche Strafzeiten aus.</p>
+                                <button class="btn btn-primary" onclick="window.gameEngine.startHockeyGame()">Spiel starten</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls-help">
+                        <p><i class="fa-solid fa-arrows-left-right"></i> <strong>Steuerung:</strong> Goalie mit Maus oder Finger bewegen. Pucks halten, rote Strafzeiten meiden.</p>
+                    </div>
+                </div>
+
+                <div class="leaderboard-panel">
+                    <div class="leaderboard-header">
+                        <h3><i class="fa-solid fa-ranking-star"></i> Freunde-Highscore</h3>
+                        <span>Top 10</span>
+                    </div>
+                    <ol class="leaderboard-list" id="leaderboard-list">
+                        <li>Noch keine Einträge. Starte ein Spiel und trag dich ein!</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Chat / Gästebuch -->
+        <section class="slide" id="slide-chat">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-comments"></i> Gratulanten-Chat</h2>
+                <p>Hinterlasse Fietje einen lieben Gruß zum Geburtstag! Jede Nachricht wird sofort angezeigt.</p>
+                <div class="chat-status-badge offline" id="chat-mode-indicator">
+                    <i class="fa-solid fa-circle"></i> <span id="chat-mode-text">Demo-Modus (Lokal)</span>
+                </div>
+            </div>
+
+            <div class="chat-layout">
+                <!-- Chat Message List -->
+                <div class="chat-box">
+                    <div class="chat-messages" id="chat-messages-container">
+                        <!-- Messages will be rendered here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Chat Input Form -->
+                <div class="chat-form-wrapper">
+                    <form id="chat-form" onsubmit="event.preventDefault(); window.app.submitMessage();">
+                        <div class="form-group">
+                            <label for="chat-username">Dein Name:</label>
+                            <input type="text" id="chat-username" placeholder="z. B. Oma, Kumpel Paul..." required maxlength="25">
+                        </div>
+                        <div class="form-group">
+                            <label for="chat-message">Deine Glückwünsche:</label>
+                            <textarea id="chat-message" placeholder="Schreib Fietje etwas Schönes..." required maxlength="250" rows="3"></textarea>
+                        </div>
+                        
+                        <!-- Emoji Picker Button Row -->
+                        <div class="emoji-row" id="emoji-picker">
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('🎉')">🎉</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('⚽')">⚽</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('🎂')">🎂</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('❤️')">❤️</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('🏆')">🏆</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('🔥')">🔥</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('👏')">👏</button>
+                            <button type="button" class="emoji-btn" onclick="window.app.addEmoji('🥳')">🥳</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" id="btn-send-message">
+                            <i class="fa-solid fa-paper-plane"></i> Nachricht senden
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Lightbox Modal for Gallery -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" id="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" alt="Vergrößertes Bild">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="game.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
