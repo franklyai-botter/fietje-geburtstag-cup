@@ -111,7 +111,15 @@
             <div class="section-header">
                 <h2><i class="fa-solid fa-trophy"></i> Fietje-Cup Arena</h2>
                 <p>Hol dir die Trophäe! Wähle dein Lieblingsspiel und knacke den Highscore.</p>
-                <div class="game-selector">
+                <div class="cup-roadmap" id="cup-roadmap">
+                    <div class="cup-roadmap-step active" data-cup-step="penalty"><span>1</span> Union</div>
+                    <div class="cup-roadmap-step" data-cup-step="keepup"><span>2</span> Bayern</div>
+                    <div class="cup-roadmap-step" data-cup-step="tennis"><span>3</span> Tennis</div>
+                    <div class="cup-roadmap-step" data-cup-step="hockey"><span>4</span> Eishockey</div>
+                    <div class="cup-roadmap-step" data-cup-step="final"><span>5</span> Finale</div>
+                </div>
+                <button class="btn btn-primary" onclick="window.gameEngine.startCup()"><i class="fa-solid fa-play"></i> Fietje-Cup starten</button>
+                <div class="game-selector legacy-game-selector" aria-hidden="true">
                     <button class="game-tab-btn active" id="tab-penalty" onclick="window.gameEngine.switchGame('penalty')">
                         <i class="fa-solid fa-star"></i> Union: Eisern-Elfmeter
                     </button>
@@ -228,7 +236,29 @@
             </div>
         </section>
 
-        <!-- Slide 5: Chat / Gästebuch -->
+        <!-- Slide 5: Cup Finale -->
+        <section class="slide" id="slide-cup-final">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-ranking-star"></i> Fietje-Cup Finale</h2>
+                <p>Alle vier Spiele sind gespielt. Jetzt kommt der Name ins Ranking.</p>
+            </div>
+            <div class="final-score-card">
+                <div class="final-total">
+                    <span>Gesamtpunkte</span>
+                    <strong id="cup-total-score">0</strong>
+                </div>
+                <div class="cup-summary-grid" id="cup-summary-grid"></div>
+                <form class="cup-name-form" onsubmit="event.preventDefault(); window.gameEngine.submitCupScore();">
+                    <label for="cup-player-name">Name fuer die Freunde-Top-10</label>
+                    <div class="cup-name-row">
+                        <input type="text" id="cup-player-name" maxlength="24" placeholder="z. B. Paul, Oma, Team Berlin" required>
+                        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-medal"></i> Eintragen</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Slide 6: Chat / Gästebuch -->
         <section class="slide" id="slide-chat">
             <div class="section-header">
                 <h2><i class="fa-solid fa-comments"></i> Gratulanten-Chat</h2>

@@ -184,11 +184,16 @@ window.gameEngine = {
     activeGame: 'penalty',
     gamesPaused: true,
     gameTypes: ['penalty', 'keepup', 'tennis', 'hockey'],
+    cupOrder: ['penalty', 'keepup', 'tennis', 'hockey'],
+    cupResults: {},
+    cupStarted: false,
+    cupSubmitted: false,
     gameLabels: {
         penalty: 'Union-Elfmeter',
         keepup: 'Bayern-Header',
         tennis: 'Tennis',
-        hockey: 'Eishockey'
+        hockey: 'Eishockey',
+        cup: 'Fietje-Cup'
     },
 
     // --- GAME 1: Union Berlin - Eisern-Elfmeter ---
@@ -261,6 +266,7 @@ window.gameEngine = {
 
     // --- Allgemeine Steuerung ---
     init() {
+        this.createCupSlides();
         this.penalty.highscore = parseInt(localStorage.getItem('fietje_penalty_highscore') || '0');
         this.keepup.highscore = parseInt(localStorage.getItem('fietje_keepup_highscore') || '0');
         this.tennis.highscore = parseInt(localStorage.getItem('fietje_tennis_highscore') || '0');
@@ -303,7 +309,8 @@ window.gameEngine = {
         cancelAnimationFrame(this.hockey.animationId);
         this.activeGame = gameType;
 
-        const gamesSlideActive = document.getElementById('slide-games')?.classList.contains('active');
+        const gamesSlideActive = document.getElementById('slide-games')?.classList.contains('active')
+            || document.getElementById(`slide-cup-${gameType}`)?.classList.contains('active');
         this.gameTypes.forEach(type => {
             document.getElementById(`tab-${type}`)?.classList.toggle('active', type === gameType);
             document.getElementById(`game-${type}-container`)?.classList.toggle('active', type === gameType);
@@ -326,6 +333,7 @@ window.gameEngine = {
         const overlay = document.getElementById(`${gameType}-overlay`);
         const title = document.getElementById(`${gameType}-overlay-title`);
         const desc = document.getElementById(`${gameType}-overlay-desc`);
+        const button = overlay?.querySelector('button');
         const copy = {
             penalty: ['Eisern-Elfmeter', 'Schiesse Tore fuer Union Berlin! Klicke im richtigen Moment auf das Tor, um den Ball am Torwart vorbeizuzirkeln.'],
             keepup: ['Mia-San-Header', 'Allianz Kopfball-Arena! Fange Fussbaelle, Sterne und die Meisterschale auf. Weiche roten Karten aus!'],
@@ -339,6 +347,15 @@ window.gameEngine = {
             overlay.style.display = 'flex';
             title.textContent = copy[gameType][0];
             desc.textContent = copy[gameType][1];
+            if (button) {
+                button.textContent = 'Spiel starten';
+                button.onclick = () => {
+                    if (gameType === 'penalty') this.startPenaltyGame();
+                    if (gameType === 'keepup') this.startKeepUpGame();
+                    if (gameType === 'tennis') this.startTennisGame();
+                    if (gameType === 'hockey') this.startHockeyGame();
+                };
+            }
         } else if (state === 'playing' || state === 'shooting' || state === 'goal' || state === 'saved') {
             overlay.style.display = 'none';
         }
@@ -373,6 +390,133 @@ window.gameEngine = {
         SoundEffects.resumeAudio();
     },
 
+    createCupSlides() {
+        const gamesSection = document.getElementById('slide-games');
+        const finalSection = document.getElementById('slide-cup-final');
+        if (!gamesSection || !finalSection || document.getElementById('slide-cup-penalty')) return;
+
+        const stageTitles = {
+            penalty: ['Station 1', 'Union: Eisern-Elfmeter'],
+            keepup: ['Station 2', 'Bayern: Mia-San-Header'],
+            tennis: ['Station 3', 'Tennis: Matchball'],
+            hockey: ['Station 4', 'Eishockey: Eis-Goalie']
+        };
+
+        this.cupOrder.forEach(type => {
+            const container = document.getElementById(`game-${type}-container`);
+            if (!container) return;
+
+            const section = document.createElement('section');
+            section.className = 'slide cup-game-slide';
+            section.id = `slide-cup-${type}`;
+            section.innerHTML = `
+                <div class="section-header">
+                    <p>${stageTitles[type][0]}</p>
+                    <h2><i class="fa-solid fa-trophy"></i> ${stageTitles[type][1]}</h2>
+                </div>
+            `;
+            section.appendChild(container);
+            finalSection.parentNode.insertBefore(section, finalSection);
+        });
+    },
+
+    startCup() {
+        this.cupStarted = true;
+        this.cupSubmitted = false;
+        this.cupResults = {};
+        localStorage.removeItem('fietje_current_cup_results');
+        this.cupOrder.forEach(type => {
+            this[type].gameState = 'menu';
+            this.syncOverlayForGame(type);
+        });
+        this.drawPenaltyMenu();
+        this.drawKeepUpMenu();
+        this.drawTennisMenu();
+        this.drawHockeyMenu();
+        this.renderCupRoadmap('penalty');
+        this.showCupStage('penalty');
+    },
+
+    showCupStage(gameType) {
+        this.switchGame(gameType);
+        if (window.app) window.app.switchSlide(`cup-${gameType}`);
+    },
+
+    completeCupStage(gameType, score) {
+        if (!this.cupStarted) this.cupStarted = true;
+        this.cupResults[gameType] = score || 0;
+        localStorage.setItem('fietje_current_cup_results', JSON.stringify(this.cupResults));
+        this.renderCupRoadmap(gameType);
+    },
+
+    goToNextCupStage(gameType) {
+        const currentIndex = this.cupOrder.indexOf(gameType);
+        const nextGame = this.cupOrder[currentIndex + 1];
+        if (nextGame) {
+            this.renderCupRoadmap(nextGame);
+            this.showCupStage(nextGame);
+        } else {
+            this.renderCupSummary();
+            if (window.app) window.app.switchSlide('cup-final');
+        }
+    },
+
+    setGameOverOverlay(gameType, titleText, bodyHtml) {
+        const overlay = document.getElementById(`${gameType}-overlay`);
+        const title = document.getElementById(`${gameType}-overlay-title`);
+        const desc = document.getElementById(`${gameType}-overlay-desc`);
+        const button = overlay?.querySelector('button');
+        if (!overlay || !title || !desc || !button) return;
+
+        const currentIndex = this.cupOrder.indexOf(gameType);
+        const isFinalGame = currentIndex === this.cupOrder.length - 1;
+        this.completeCupStage(gameType, this[gameType].score || 0);
+
+        overlay.style.display = 'flex';
+        title.textContent = titleText;
+        desc.innerHTML = bodyHtml;
+        button.textContent = isFinalGame ? 'Zum Finale' : 'Naechste Station';
+        button.onclick = () => this.goToNextCupStage(gameType);
+    },
+
+    renderCupRoadmap(activeStep = 'penalty') {
+        document.querySelectorAll('.cup-roadmap-step').forEach(step => {
+            const type = step.getAttribute('data-cup-step');
+            const isDone = type !== 'final' && Object.prototype.hasOwnProperty.call(this.cupResults, type);
+            step.classList.toggle('done', isDone);
+            step.classList.toggle('active', type === activeStep);
+        });
+    },
+
+    renderCupSummary() {
+        const total = this.cupOrder.reduce((sum, type) => sum + (this.cupResults[type] || 0), 0);
+        const totalEl = document.getElementById('cup-total-score');
+        const grid = document.getElementById('cup-summary-grid');
+        if (totalEl) totalEl.textContent = total;
+        if (grid) {
+            grid.innerHTML = this.cupOrder.map(type => `
+                <div class="cup-summary-item">
+                    <span>${this.gameLabels[type]}</span>
+                    <strong>${this.cupResults[type] || 0}</strong>
+                </div>
+            `).join('');
+        }
+        this.renderCupRoadmap('final');
+    },
+
+    submitCupScore() {
+        if (this.cupSubmitted) return;
+        const input = document.getElementById('cup-player-name');
+        const name = (input?.value || '').trim().slice(0, 24);
+        if (!name) return;
+
+        const total = this.cupOrder.reduce((sum, type) => sum + (this.cupResults[type] || 0), 0);
+        this.saveScoreToLeaderboard('cup', total, name);
+        this.cupSubmitted = true;
+        if (input) input.value = '';
+        if (window.app) window.app.switchSlide('games');
+    },
+
     getLeaderboard() {
         try {
             return JSON.parse(localStorage.getItem('fietje_friend_leaderboard') || '[]');
@@ -381,13 +525,13 @@ window.gameEngine = {
         }
     },
 
-    saveScoreToLeaderboard(gameType, score) {
+    saveScoreToLeaderboard(gameType, score, providedName = null) {
         if (!score || score <= 0) {
             this.renderLeaderboard();
             return;
         }
 
-        const rawName = prompt(`Starker Lauf! Name fuer die Top 10 eintragen (${score} Punkte):`, '');
+        const rawName = providedName ?? prompt(`Starker Lauf! Name fuer die Top 10 eintragen (${score} Punkte):`, '');
         const name = (rawName || '').trim().slice(0, 24);
         if (!name) {
             this.renderLeaderboard();
@@ -632,14 +776,16 @@ window.gameEngine = {
                 localStorage.setItem('fietje_penalty_highscore', this.penalty.highscore);
                 document.getElementById('penalty-highscore').textContent = this.penalty.highscore;
             }
-            this.saveScoreToLeaderboard('penalty', this.penalty.score);
+            this.completeCupStage('penalty', this.penalty.score);
 
             const overlay = document.getElementById('penalty-overlay');
             const title = document.getElementById('penalty-overlay-title');
             const desc = document.getElementById('penalty-overlay-desc');
 
             overlay.style.display = 'flex';
-            title.textContent = "Spiel Beendet!";
+            title.textContent = "Spiel beendet!";
+            overlay.querySelector('button').textContent = 'Naechste Station';
+            overlay.querySelector('button').onclick = () => this.goToNextCupStage('penalty');
             desc.innerHTML = `Du hast <strong>${this.penalty.goals} von 5 Toren</strong> für Union erzielt!<br>Gesamtpunktzahl: <strong>${this.penalty.score}</strong>`;
         } else {
             this.penalty.gameState = 'playing';
@@ -1121,7 +1267,7 @@ window.gameEngine = {
             localStorage.setItem('fietje_keepup_highscore', this.keepup.highscore);
             document.getElementById('keepup-highscore').textContent = this.keepup.highscore;
         }
-        this.saveScoreToLeaderboard('keepup', this.keepup.score);
+        this.completeCupStage('keepup', this.keepup.score);
 
         const overlay = document.getElementById('keepup-overlay');
         const title = document.getElementById('keepup-overlay-title');
@@ -1129,6 +1275,8 @@ window.gameEngine = {
 
         overlay.style.display = 'flex';
         title.textContent = "Abpfiff!";
+        overlay.querySelector('button').textContent = 'Naechste Station';
+        overlay.querySelector('button').onclick = () => this.goToNextCupStage('keepup');
         desc.innerHTML = `Du hast <strong>${this.keepup.score} Punkte</strong> für den FC Bayern geholt!<br>Highscore: <strong>${this.keepup.highscore}</strong>`;
     },
 
@@ -1477,11 +1625,13 @@ window.gameEngine = {
             localStorage.setItem('fietje_tennis_highscore', this.tennis.highscore);
             document.getElementById('tennis-highscore').textContent = this.tennis.highscore;
         }
-        this.saveScoreToLeaderboard('tennis', this.tennis.score);
+        this.completeCupStage('tennis', this.tennis.score);
 
         const overlay = document.getElementById('tennis-overlay');
         document.getElementById('tennis-overlay-title').textContent = 'Match vorbei!';
         document.getElementById('tennis-overlay-desc').innerHTML = `Du hast <strong>${this.tennis.score} Punkte</strong> im Tennis-Match geholt.`;
+        overlay.querySelector('button').textContent = 'Naechste Station';
+        overlay.querySelector('button').onclick = () => this.goToNextCupStage('tennis');
         overlay.style.display = 'flex';
     },
 
@@ -1677,11 +1827,13 @@ window.gameEngine = {
             localStorage.setItem('fietje_hockey_highscore', this.hockey.highscore);
             document.getElementById('hockey-highscore').textContent = this.hockey.highscore;
         }
-        this.saveScoreToLeaderboard('hockey', this.hockey.score);
+        this.completeCupStage('hockey', this.hockey.score);
 
         const overlay = document.getElementById('hockey-overlay');
         document.getElementById('hockey-overlay-title').textContent = 'Abpfiff auf dem Eis!';
         document.getElementById('hockey-overlay-desc').innerHTML = `Du hast <strong>${this.hockey.score} Punkte</strong> als Eis-Goalie geholt.`;
+        overlay.querySelector('button').textContent = 'Zum Finale';
+        overlay.querySelector('button').onclick = () => this.goToNextCupStage('hockey');
         overlay.style.display = 'flex';
     },
 

@@ -189,7 +189,7 @@ function switchSlide(slideId) {
         appState.currentSlide = slideId;
 
         // Spiel anhalten oder starten, je nachdem, ob das Spiel-Slide aktiv ist
-        if (slideId === 'games') {
+        if (slideId === 'games' || slideId.startsWith('cup-')) {
             window.gameEngine.resumeGames();
         } else {
             window.gameEngine.pauseGames();

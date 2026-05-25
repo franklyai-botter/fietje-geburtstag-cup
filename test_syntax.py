@@ -45,6 +45,7 @@ class FietjeWebsiteTests(unittest.TestCase):
     def test_game_html_contract(self):
         required_ids = (
             "slide-games",
+            "slide-cup-final",
             "tab-penalty",
             "tab-keepup",
             "tab-tennis",
@@ -62,6 +63,10 @@ class FietjeWebsiteTests(unittest.TestCase):
             "tennis-overlay",
             "hockey-overlay",
             "leaderboard-list",
+            "cup-roadmap",
+            "cup-total-score",
+            "cup-summary-grid",
+            "cup-player-name",
         )
         for element_id in required_ids:
             with self.subTest(element_id=element_id):
@@ -75,6 +80,8 @@ class FietjeWebsiteTests(unittest.TestCase):
         self.assertIn("window.gameEngine.startKeepUpGame()", self.html)
         self.assertIn("window.gameEngine.startTennisGame()", self.html)
         self.assertIn("window.gameEngine.startHockeyGame()", self.html)
+        self.assertIn("window.gameEngine.startCup()", self.html)
+        self.assertIn("window.gameEngine.submitCupScore()", self.html)
         self.assertNotIn("firebasejs/9.22.0", self.html, "Firebase darf lokale Spiele nicht beim Laden blockieren")
 
     def test_css_keeps_game_controls_usable(self):
@@ -121,7 +128,11 @@ class FietjeWebsiteTests(unittest.TestCase):
 
         self.assertIn("fietje_friend_leaderboard", self.game_js)
         self.assertIn(".slice(0, 10)", self.game_js)
-        self.assertIn("prompt(`Starker Lauf!", self.game_js)
+        self.assertIn("createCupSlides()", self.game_js)
+        self.assertIn("startCup()", self.game_js)
+        self.assertIn("submitCupScore()", self.game_js)
+        self.assertIn("slide-cup-${type}", self.game_js)
+        self.assertIn("providedName ?? prompt", self.game_js)
 
     def test_firebase_is_loaded_only_when_configured(self):
         self.assertIn("async function ensureFirebaseLoaded()", self.app_js)
