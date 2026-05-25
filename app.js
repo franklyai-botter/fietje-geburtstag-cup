@@ -121,11 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 4. Chat initialisieren (Offline- oder Firebase-Modus)
     await initChat();
 
-    // 5. Upload & Reset-Buttons für Galerie
-    document.getElementById('gallery-upload').addEventListener('change', handleImageUpload);
-    document.getElementById('btn-reset-gallery').addEventListener('click', resetGallery);
-
-    // 6. Lightbox Event Listeners
+    // 5. Lightbox Event Listeners
     const lightbox = document.getElementById('lightbox');
     const lightboxClose = document.getElementById('lightbox-close');
     lightboxClose.addEventListener('click', () => lightbox.style.display = 'none');
@@ -194,83 +190,22 @@ function switchSlide(slideId) {
     }, 300);
 }
 
-// --- Galerie Logik ---
+// --- Galerie Logik (nur feste, mitdeployte Bilder) ---
 async function loadGallery() {
     const container = document.getElementById('gallery-container');
     container.innerHTML = '';
-    
-    // Hochgeladene Bilder aus IndexedDB laden (als dichte Liste, nach ID sortiert)
-    const savedImages = await getImagesFromDB();
-    appState.uploadedImages = savedImages.sort((a, b) => a.id - b.id).map(img => img.data);
 
-    const resetBtn = document.getElementById('btn-reset-gallery');
-    resetBtn.style.display = appState.uploadedImages.length > 0 ? 'inline-flex' : 'none';
-
-    // Anzeige: feste Bilder + hochgeladene Bilder, keine leeren Platzhalter (max MAX_GALLERY)
-    const tiles = [];
-    PRESET_IMAGES.forEach(src => tiles.push({ type: 'img', src }));
-    appState.uploadedImages.forEach(src => tiles.push({ type: 'img', src }));
-    tiles.length = Math.min(tiles.length, MAX_GALLERY);
-
-    tiles.forEach((tile, i) => {
+    PRESET_IMAGES.slice(0, MAX_GALLERY).forEach((src, i) => {
         const item = document.createElement('div');
         item.classList.add('gallery-item');
-
-        if (tile.type === 'img') {
-            const img = document.createElement('img');
-            img.src = tile.src;
-            img.alt = `Fietje Moment ${i + 1}`;
-            img.loading = 'lazy';
-            item.appendChild(img);
-            item.onclick = () => openLightbox(tile.src, `Moment ${i + 1}`);
-        } else {
-            const placeholder = PLACEHOLDER_ICONS[i % PLACEHOLDER_ICONS.length];
-            item.innerHTML = `
-                <div class="placeholder-img">
-                    <i class="fa-solid ${placeholder.icon}"></i>
-                    <span>${placeholder.label}</span>
-                </div>
-            `;
-            item.onclick = () => {
-                // Beim Klick auf einen Platzhalter den File-Uploader auslösen
-                document.getElementById('gallery-upload').click();
-            };
-        }
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `Fietje Moment ${i + 1}`;
+        img.loading = 'lazy';
+        item.appendChild(img);
+        item.onclick = () => openLightbox(src, `Moment ${i + 1}`);
         container.appendChild(item);
     });
-}
-
-function handleImageUpload(e) {
-    const files = Array.from(e.target.files);
-    const maxUploads = Math.max(0, MAX_GALLERY - PRESET_IMAGES.length);
-    let processed = 0;
-
-    files.forEach((file, idx) => {
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            // Nur so viele Uploads zulassen, bis MAX_GALLERY erreicht ist
-            if (appState.uploadedImages.length < maxUploads) {
-                const id = Date.now() + idx;
-                appState.uploadedImages.push(event.target.result);
-                saveImageToDB(id, event.target.result);
-            }
-
-            processed++;
-            if (processed === files.length) {
-                await loadGallery();
-                triggerConfetti();
-            }
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-async function resetGallery() {
-    if (confirm("Möchtest du alle hochgeladenen Bilder löschen und die Platzhalter wiederherstellen?")) {
-        appState.uploadedImages = [];
-        clearImagesFromDB();
-        await loadGallery();
-    }
 }
 
 function openLightbox(src, caption) {
