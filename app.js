@@ -46,6 +46,10 @@ const PLACEHOLDER_ICONS = [
 // Demo-Beiträge entfernt – der Chat startet leer und zeigt nur echte Nachrichten (Firebase-Live-Modus).
 const MOCK_CHAT_MESSAGES = [];
 
+// --- Galerie: feste Bilder (mitdeployt) + Upload-Slots, Obergrenze 50 ---
+const MAX_GALLERY = 50;
+const PRESET_IMAGES = ["images/foto-01.jpg","images/foto-02.jpg","images/foto-03.jpg","images/foto-04.jpg","images/foto-05.jpg","images/foto-06.jpg","images/foto-07.jpg","images/foto-08.jpg","images/foto-09.jpg","images/foto-10.jpg","images/foto-11.jpg","images/foto-12.jpg","images/foto-13.jpg","images/foto-14.jpg","images/foto-15.jpg","images/foto-16.jpg","images/foto-17.jpg","images/foto-18.jpg","images/foto-19.jpg","images/foto-20.jpg","images/foto-21.jpg","images/foto-22.jpg","images/foto-23.jpg","images/foto-24.jpg","images/foto-25.jpg","images/foto-26.jpg","images/foto-27.jpg","images/foto-28.jpg","images/foto-29.jpg","images/foto-30.jpg","images/foto-31.jpg","images/foto-32.jpg","images/foto-33.jpg","images/foto-34.jpg","images/foto-35.jpg","images/foto-36.jpg","images/foto-37.jpg","images/foto-38.jpg","images/foto-39.jpg","images/foto-40.jpg","images/foto-41.jpg","images/foto-42.jpg","images/foto-43.jpg"];
+
 // --- IndexedDB für unbegrenzten Galerie-Upload-Speicher ---
 const dbName = "FietjeGalleryDB";
 let idb = null;
@@ -195,36 +199,32 @@ async function loadGallery() {
     const container = document.getElementById('gallery-container');
     container.innerHTML = '';
     
-    // Gespeicherte Bilder aus IndexedDB laden
+    // Hochgeladene Bilder aus IndexedDB laden (als dichte Liste, nach ID sortiert)
     const savedImages = await getImagesFromDB();
-    appState.uploadedImages = [];
-    
-    // Sortiere Bilder nach ID, um die Reihenfolge beizubehalten
-    savedImages.sort((a, b) => a.id - b.id).forEach(img => {
-        appState.uploadedImages[img.id] = img.data;
-    });
+    appState.uploadedImages = savedImages.sort((a, b) => a.id - b.id).map(img => img.data);
 
     const resetBtn = document.getElementById('btn-reset-gallery');
-    if (appState.uploadedImages.length > 0) {
-        resetBtn.style.display = 'inline-flex';
-    } else {
-        resetBtn.style.display = 'none';
-    }
+    resetBtn.style.display = appState.uploadedImages.length > 0 ? 'inline-flex' : 'none';
 
-    // 20 Items rendern
-    for (let i = 0; i < 20; i++) {
+    // Anzeige: erst feste Bilder, dann hochgeladene, dann Platzhalter bis MAX_GALLERY
+    const tiles = [];
+    PRESET_IMAGES.forEach(src => tiles.push({ type: 'img', src }));
+    appState.uploadedImages.forEach(src => tiles.push({ type: 'img', src }));
+    while (tiles.length < MAX_GALLERY) tiles.push({ type: 'placeholder' });
+    tiles.length = Math.min(tiles.length, MAX_GALLERY);
+
+    tiles.forEach((tile, i) => {
         const item = document.createElement('div');
         item.classList.add('gallery-item');
-        
-        if (appState.uploadedImages[i]) {
-            // Falls ein hochgeladenes Bild existiert
+
+        if (tile.type === 'img') {
             const img = document.createElement('img');
-            img.src = appState.uploadedImages[i];
+            img.src = tile.src;
             img.alt = `Fietje Moment ${i + 1}`;
+            img.loading = 'lazy';
             item.appendChild(img);
-            item.onclick = () => openLightbox(appState.uploadedImages[i], `Moment ${i + 1}`);
+            item.onclick = () => openLightbox(tile.src, `Moment ${i + 1}`);
         } else {
-            // Sonst Platzhalter rendern
             const placeholder = PLACEHOLDER_ICONS[i % PLACEHOLDER_ICONS.length];
             item.innerHTML = `
                 <div class="placeholder-img">
@@ -238,29 +238,26 @@ async function loadGallery() {
             };
         }
         container.appendChild(item);
-    }
+    });
 }
 
 function handleImageUpload(e) {
     const files = Array.from(e.target.files);
-    let loadedCount = 0;
-    
-    files.forEach(file => {
+    const maxUploads = Math.max(0, MAX_GALLERY - PRESET_IMAGES.length);
+    let processed = 0;
+
+    files.forEach((file, idx) => {
         const reader = new FileReader();
         reader.onload = async (event) => {
-            // Finde die nächste freie Platzhalter-Stelle
-            let nextIndex = 0;
-            while (nextIndex < 20 && appState.uploadedImages[nextIndex]) {
-                nextIndex++;
+            // Nur so viele Uploads zulassen, bis MAX_GALLERY erreicht ist
+            if (appState.uploadedImages.length < maxUploads) {
+                const id = Date.now() + idx;
+                appState.uploadedImages.push(event.target.result);
+                saveImageToDB(id, event.target.result);
             }
-            
-            if (nextIndex < 20) {
-                appState.uploadedImages[nextIndex] = event.target.result;
-                saveImageToDB(nextIndex, event.target.result);
-            }
-            
-            loadedCount++;
-            if (loadedCount === files.length || nextIndex >= 19) {
+
+            processed++;
+            if (processed === files.length) {
                 await loadGallery();
                 triggerConfetti();
             }
