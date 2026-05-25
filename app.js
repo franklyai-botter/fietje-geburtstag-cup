@@ -1,18 +1,14 @@
-// --- FIREBASE KONFIGURATION (Optional für Live-Chat) ---
-// Wenn du die Webseite auf Vercel/GitHub Pages hostest und möchtest, dass alle Gäste live chatten können,
-// erstelle ein kostenloses Firebase-Projekt mit einer "Realtime Database" und füge deine Config hier ein:
-const FIREBASE_CONFIG = null;
-/* Beispiel:
+// --- FIREBASE KONFIGURATION (Live-Chat aktiv) ---
 const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyA123...",
-    authDomain: "fietje-geburtstag.firebaseapp.com",
-    databaseURL: "https://fietje-geburtstag-default-rtdb.firebaseio.com",
-    projectId: "fietje-geburtstag",
-    storageBucket: "fietje-geburtstag.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef..."
+    apiKey: "AIzaSyAOwaplk2dxOZ8bQtGL_TEmOpPAG6lZwb8",
+    authDomain: "fietje-15-geburtstag.firebaseapp.com",
+    databaseURL: "https://fietje-15-geburtstag-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "fietje-15-geburtstag",
+    storageBucket: "fietje-15-geburtstag.firebasestorage.app",
+    messagingSenderId: "114751638734",
+    appId: "1:114751638734:web:29effa92abfe4d2840149f",
+    measurementId: "G-V0KY589FML"
 };
-*/
 
 // --- State-Management ---
 const appState = {
@@ -47,11 +43,8 @@ const PLACEHOLDER_ICONS = [
     { icon: 'fa-sparkles', label: 'Party-Glanz' }
 ];
 
-const MOCK_CHAT_MESSAGES = [
-    { name: 'Oma & Opa', message: 'Alles, alles Liebe zum 15. Geburtstag, lieber Fietje! 🎂 Bleib so sportlich und fröhlich wie du bist. Wir drücken dir die Daumen beim Fietje-Cup!', time: '14:15 Uhr' },
-    { name: 'Mama & Papa', message: 'Herzlichen Glückwunsch zum 15. Geburtstag, Fietje! ❤️ Wir sind super stolz auf dich und freuen uns darauf, heute mit dir zu feiern!', time: '14:10 Uhr' },
-    { name: 'Kumpel Leon', message: 'Happy Birthday Bro! ⚽ 15 Jahre alt, jetzt gehts ab. Werde heute deinen Highscore im Fietje-Cup zerstören!', time: '14:02 Uhr' }
-];
+// Demo-Beiträge entfernt – der Chat startet leer und zeigt nur echte Nachrichten (Firebase-Live-Modus).
+const MOCK_CHAT_MESSAGES = [];
 
 // --- IndexedDB für unbegrenzten Galerie-Upload-Speicher ---
 const dbName = "FietjeGalleryDB";
