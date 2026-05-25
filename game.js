@@ -191,8 +191,8 @@ window.gameEngine = {
     gameLabels: {
         penalty: 'Union-Elfmeter',
         keepup: 'Bayern-Header',
-        tennis: 'Tennis',
-        hockey: 'Eishockey',
+        tennis: 'Fietje',
+        hockey: 'Eisbären',
         cup: 'Fietje-Cup'
     },
 
@@ -205,7 +205,7 @@ window.gameEngine = {
         goals: 0,
         highscore: 0,
         gameState: 'menu', // 'menu', 'playing', 'shooting', 'goal', 'saved', 'gameover'
-        ball: { x: 300, y: 350, r: 16, targetX: 300, targetY: 350, speed: 12, size: 16 },
+        ball: { x: 300, y: 350, r: 16, targetX: 300, targetY: 350, speed: 12, size: 16, flightFrames: 0, maxFlightFrames: 90 },
         keeper: { x: 300, y: 130, w: 50, h: 70, speed: 3.8, dir: 1, jumpX: 0, state: 'idle' },
         net: { x: 120, y: 70, w: 360, h: 140 },
         grassParticles: [],
@@ -337,8 +337,8 @@ window.gameEngine = {
         const copy = {
             penalty: ['Eisern-Elfmeter', 'Schiesse Tore fuer Union Berlin! Klicke im richtigen Moment auf das Tor, um den Ball am Torwart vorbeizuzirkeln.'],
             keepup: ['Mia-San-Header', 'Allianz Kopfball-Arena! Fange Fussbaelle, Sterne und die Meisterschale auf. Weiche roten Karten aus!'],
-            tennis: ['Matchball', 'Halte die Tennis-Rally am Laufen! Triff die Baelle mit deinem Schlaeger und sammle Bonussterne.'],
-            hockey: ['Eis-Goalie', 'Beschuetze das Tor! Fange Pucks, sammle Pokale und weiche Strafzeiten aus.']
+            tennis: ['Fietje', 'Halte die Tennis-Rally am Laufen! Triff die Baelle mit deinem Schlaeger und sammle Bonussterne.'],
+            hockey: ['Eisbären', 'Beschuetze das Tor! Halte Pucks mit Goalie und Hockeyschlaeger, sammle Pokale und weiche Strafzeiten aus.']
         };
 
         if (!overlay || !title || !desc) return;
@@ -400,8 +400,8 @@ window.gameEngine = {
         const stageTitles = {
             penalty: ['Station 1', 'Union: Eisern-Elfmeter'],
             keepup: ['Station 2', 'Bayern: Mia-San-Header'],
-            tennis: ['Station 3', 'Tennis: Matchball'],
-            hockey: ['Station 4', 'Eishockey: Eis-Goalie']
+            tennis: ['Station 3', 'Fietje: Matchball'],
+            hockey: ['Station 4', 'Eisbären: Eis-Goalie']
         };
 
         this.cupOrder.forEach(type => {
@@ -478,7 +478,7 @@ window.gameEngine = {
         overlay.classList.remove('game-overlay-start');
         title.textContent = titleText;
         desc.innerHTML = bodyHtml;
-        button.textContent = isFinalGame ? 'Zum Finale' : 'Naechste Station';
+        button.textContent = isFinalGame ? 'Zur Siegerehrung' : 'Naechste Station';
         button.onclick = () => this.goToNextCupStage(gameType);
     },
 
@@ -608,6 +608,7 @@ window.gameEngine = {
                 this.penalty.gameState = 'shooting';
                 this.penalty.ball.targetX = x;
                 this.penalty.ball.targetY = y;
+                this.penalty.ball.flightFrames = 0;
                 this.penalty.shots++;
 
                 // Rasenstücke fliegen lassen
@@ -651,6 +652,7 @@ window.gameEngine = {
         this.penalty.ball.x = 300;
         this.penalty.ball.y = 350;
         this.penalty.ball.size = 16;
+        this.penalty.ball.flightFrames = 0;
         this.penalty.keeper.state = 'idle';
         this.penalty.keeper.x = 300;
         this.penalty.keeper.speed = 3.8 + (this.penalty.goals * 0.7);
@@ -717,15 +719,18 @@ window.gameEngine = {
             const dx = ball.targetX - ball.x;
             const dy = ball.targetY - ball.y;
             const dist = Math.sqrt(dx*dx + dy*dy);
+            ball.flightFrames++;
 
             ball.size = 16 - (350 - ball.y) * 0.025;
             if (ball.size < 7) ball.size = 7;
 
-            if (dist > 5) {
+            if (dist <= ball.speed || ball.flightFrames >= ball.maxFlightFrames) {
+                ball.x = ball.targetX;
+                ball.y = ball.targetY;
+                this.checkPenaltyResult();
+            } else if (dist > 0) {
                 ball.x += (dx / dist) * ball.speed;
                 ball.y += (dy / dist) * ball.speed;
-            } else {
-                this.checkPenaltyResult();
             }
         }
 
@@ -1686,12 +1691,51 @@ window.gameEngine = {
             ctx.restore();
         });
 
+        const racketX = this.tennis.paddleX;
+        const racketY = this.tennis.paddleY + 8;
+
+        ctx.save();
+        ctx.translate(racketX, racketY);
+        ctx.rotate(-0.18);
+
+        ctx.strokeStyle = '#7c2d12';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(18, 18);
+        ctx.lineTo(62, 58);
+        ctx.stroke();
+
         ctx.fillStyle = '#f97316';
-        ctx.fillRect(this.tennis.paddleX - this.tennis.paddleW / 2, this.tennis.paddleY, this.tennis.paddleW, 12);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(-8, -4, 48, 23, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.58)';
+        ctx.lineWidth = 1.4;
+        for (let x = -42; x <= 26; x += 11) {
+            ctx.beginPath();
+            ctx.moveTo(x, -24);
+            ctx.lineTo(x, 16);
+            ctx.stroke();
+        }
+        for (let y = -19; y <= 11; y += 8) {
+            ctx.beginPath();
+            ctx.moveTo(-48, y);
+            ctx.lineTo(31, y);
+            ctx.stroke();
+        }
+        ctx.restore();
+
         ctx.fillStyle = '#ffffff';
         ctx.font = '900 18px Kanit';
         ctx.textAlign = 'center';
-        ctx.fillText('FIETJE', this.tennis.paddleX, this.tennis.paddleY + 32);
+        ctx.fillText('FIETJE', this.tennis.paddleX, this.tennis.paddleY - 12);
+        ctx.fillStyle = 'rgba(249, 115, 22, 0.45)';
+        ctx.fillRect(this.tennis.paddleX - this.tennis.paddleW / 2, this.tennis.paddleY + 2, this.tennis.paddleW, 6);
     },
 
     drawTennisMenu() {
@@ -1701,10 +1745,10 @@ window.gameEngine = {
         ctx.fillStyle = '#ffffff';
         ctx.font = '900 24px Kanit';
         ctx.textAlign = 'center';
-        ctx.fillText('TENNIS: MATCHBALL', 300, 180);
+        ctx.fillText('FIETJE: MATCHBALL', 300, 180);
         ctx.font = '400 14px Outfit';
         ctx.fillStyle = '#a0a0b0';
-        ctx.fillText('Starte das Spiel und halte die Rally am Leben.', 300, 220);
+        ctx.fillText('Starte das Spiel und halte die Rally mit dem Schlaeger am Leben.', 300, 220);
     },
 
     // --- GAME 4: EISHOCKEY - EIS-GOALIE ---
@@ -1839,7 +1883,7 @@ window.gameEngine = {
         overlay.classList.remove('game-overlay-start');
         document.getElementById('hockey-overlay-title').textContent = 'Abpfiff auf dem Eis!';
         document.getElementById('hockey-overlay-desc').innerHTML = `Du hast <strong>${this.hockey.score} Punkte</strong> als Eis-Goalie geholt.`;
-        overlay.querySelector('button').textContent = 'Zum Finale';
+        overlay.querySelector('button').textContent = 'Zur Siegerehrung';
         overlay.querySelector('button').onclick = () => this.goToNextCupStage('hockey');
         overlay.style.display = 'flex';
     },
@@ -1888,6 +1932,26 @@ window.gameEngine = {
             }
         });
 
+        const goalieX = this.hockey.goalieX;
+        const goalieY = this.hockey.goalieY;
+
+        ctx.save();
+        ctx.translate(goalieX, goalieY);
+        ctx.strokeStyle = '#7c3f18';
+        ctx.lineWidth = 7;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(34, -34);
+        ctx.lineTo(74, 26);
+        ctx.stroke();
+        ctx.strokeStyle = '#111827';
+        ctx.lineWidth = 9;
+        ctx.beginPath();
+        ctx.moveTo(74, 26);
+        ctx.quadraticCurveTo(58, 37, 30, 35);
+        ctx.stroke();
+        ctx.restore();
+
         ctx.fillStyle = '#d21f3c';
         ctx.fillRect(this.hockey.goalieX - this.hockey.goalieW / 2, this.hockey.goalieY, this.hockey.goalieW, 24);
         ctx.fillStyle = '#ffffff';
@@ -1896,6 +1960,9 @@ window.gameEngine = {
         ctx.font = '900 13px Kanit';
         ctx.textAlign = 'center';
         ctx.fillText('15', this.hockey.goalieX, this.hockey.goalieY - 12);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '900 16px Kanit';
+        ctx.fillText('EISBÄREN', this.hockey.goalieX, this.hockey.goalieY - 44);
     },
 
     drawHockeyMenu() {
@@ -1905,9 +1972,9 @@ window.gameEngine = {
         ctx.fillStyle = '#0f172a';
         ctx.font = '900 24px Kanit';
         ctx.textAlign = 'center';
-        ctx.fillText('EISHOCKEY: EIS-GOALIE', 300, 180);
+        ctx.fillText('EISBÄREN: EIS-GOALIE', 300, 180);
         ctx.font = '400 14px Outfit';
-        ctx.fillText('Starte das Spiel und halte den Kasten sauber.', 300, 220);
+        ctx.fillText('Starte das Spiel und halte den Kasten mit dem Stick sauber.', 300, 220);
     },
 
     drawKeepUpMenu() {

@@ -324,8 +324,10 @@ async function initChat() {
             appState.db = window.firebase.database();
             appState.isFirebaseActive = true;
             
-            statusBadge.className = 'chat-status-badge live';
-            statusText.textContent = 'Live-Modus (Firebase)';
+            if (statusBadge && statusText) {
+                statusBadge.className = 'chat-status-badge live';
+                statusText.textContent = 'Live-Modus (Firebase)';
+            }
 
             // Realtime-Listener für Chat-Nachrichten
             appState.db.ref('fietje_cup_chat').limitToLast(50).on('value', (snapshot) => {

@@ -160,6 +160,51 @@ class FietjeWebsiteTests(unittest.TestCase):
         self.assertIn("cancelAnimationFrame(this.tennis.animationId)", tennis_start)
         self.assertIn("cancelAnimationFrame(this.hockey.animationId)", hockey_start)
 
+    def test_penalty_ball_cannot_overshoot_target_forever(self):
+        update_penalty = self._extract_method("updatePenalty")
+        self.assertIn("flightFrames", self.game_js)
+        self.assertIn("maxFlightFrames", self.game_js)
+        self.assertIn("dist <= ball.speed", update_penalty)
+        self.assertIn("ball.flightFrames >= ball.maxFlightFrames", update_penalty)
+        self.assertIn("ball.x = ball.targetX", update_penalty)
+        self.assertIn("ball.y = ball.targetY", update_penalty)
+
+    def test_tennis_and_hockey_have_clear_equipment_and_labels(self):
+        draw_tennis = self._extract_method("drawTennis")
+        draw_hockey = self._extract_method("drawHockey")
+
+        self.assertIn("Fietje: Matchball", self.html)
+        self.assertIn("Eisbären: Eis-Goalie", self.html)
+        self.assertIn("FIETJE: MATCHBALL", self.game_js)
+        self.assertIn("EISBÄREN: EIS-GOALIE", self.game_js)
+        self.assertIn("ctx.ellipse(-8, -4, 48, 23", draw_tennis)
+        self.assertIn("ctx.fillText('FIETJE'", draw_tennis)
+        self.assertIn("ctx.quadraticCurveTo(58, 37, 30, 35)", draw_hockey)
+        self.assertIn("ctx.fillText('EISBÄREN'", draw_hockey)
+
+    def test_game_containers_stay_centered_responsively(self):
+        self.assertIn("width: min(100%, 650px)", self.css)
+        self.assertIn("max-width: calc(100vw - 32px)", self.css)
+        self.assertIn("margin: 0 auto", self.css)
+        self.assertIn(".cup-game-slide", self.css)
+        self.assertIn("justify-content: center", self.css)
+        self.assertIn("max-width: 600px", self.css)
+        self.assertIn("flex-wrap: wrap", self.css)
+
+    def test_layout_theme_uses_blue_with_orange_accent(self):
+        self.assertIn("--primary-red: #2563eb", self.css)
+        self.assertIn("--primary-red-hover: #1d4ed8", self.css)
+        self.assertIn("--accent-orange: #f97316", self.css)
+        self.assertIn("--accent-orange-glow", self.css)
+        self.assertNotIn("#d21f3c", self.css)
+        self.assertNotIn("210, 31, 60", self.css)
+
+    def test_chat_has_no_visible_demo_badge(self):
+        self.assertNotIn("Demo-Modus", self.html)
+        self.assertNotIn("chat-mode-indicator", self.html)
+        self.assertNotIn("chat-mode-text", self.html)
+        self.assertIn("if (statusBadge && statusText)", self.app_js)
+
     def test_optional_local_server_smoke(self):
         url = os.environ.get("FIETJE_TEST_URL", "http://127.0.0.1:8000/")
         try:

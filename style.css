@@ -1,8 +1,11 @@
 /* --- Custom Variables & Theme (Union Berlin / FC Bayern München Vibe) --- */
 :root {
-    --primary-red: #d21f3c; /* Union/Bayern Rot */
-    --primary-red-hover: #b0152e;
-    --primary-red-glow: rgba(210, 31, 60, 0.4);
+    --primary-red: #2563eb;
+    --primary-red-hover: #1d4ed8;
+    --primary-red-glow: rgba(37, 99, 235, 0.42);
+    --accent-orange: #f97316;
+    --accent-orange-hover: #ea580c;
+    --accent-orange-glow: rgba(249, 115, 22, 0.35);
     --bg-dark: #0f0f12; /* Edles Tiefschwarz */
     --bg-card-dark: #1a1a24;
     --text-light: #ffffff;
@@ -10,8 +13,8 @@
     --text-muted: #a0a0b0;
     --glass-white: rgba(255, 255, 255, 0.08);
     --glass-white-border: rgba(255, 255, 255, 0.15);
-    --glass-red: rgba(210, 31, 60, 0.15);
-    --glass-red-border: rgba(210, 31, 60, 0.3);
+    --glass-red: rgba(37, 99, 235, 0.15);
+    --glass-red-border: rgba(37, 99, 235, 0.3);
     --font-sans: 'Outfit', sans-serif;
     --font-sport: 'Kanit', sans-serif;
     --border-radius-lg: 20px;
@@ -34,8 +37,8 @@ body {
     overflow-x: hidden;
     position: relative;
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(210, 31, 60, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 40%);
+        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(249, 115, 22, 0.08) 0%, transparent 38%);
     background-attachment: fixed;
 }
 
@@ -88,13 +91,13 @@ body {
 }
 
 .logo .badge {
-    background: var(--primary-red);
+    background: var(--accent-orange);
     color: var(--text-light);
     font-size: 1rem;
     padding: 2px 8px;
     border-radius: 6px;
     vertical-align: middle;
-    box-shadow: 0 0 10px var(--primary-red-glow);
+    box-shadow: 0 0 10px var(--accent-orange-glow);
     animation: pulse-glow 2s infinite;
 }
 
@@ -216,7 +219,7 @@ body {
 .btn-primary:hover {
     background: var(--primary-red-hover);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(210, 31, 60, 0.6);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.55);
 }
 
 .btn-secondary {
@@ -260,7 +263,7 @@ body {
     display: flex;
     align-items: center;
     gap: 50px;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(210, 31, 60, 0.15);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(37, 99, 235, 0.16);
     position: relative;
     overflow: hidden;
 }
@@ -272,7 +275,7 @@ body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(210, 31, 60, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.11) 0%, transparent 50%);
     pointer-events: none;
     animation: rotate-bg 20s linear infinite;
 }
@@ -359,7 +362,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, transparent 60%, rgba(210, 31, 60, 0.05) 100%);
+    background: linear-gradient(180deg, transparent 60%, rgba(37, 99, 235, 0.06) 100%);
     opacity: 0;
     transition: var(--transition-smooth);
 }
@@ -367,7 +370,7 @@ body {
 .meaning-card:hover {
     transform: translateY(-5px);
     border-color: var(--glass-red-border);
-    box-shadow: 0 10px 30px rgba(210, 31, 60, 0.15);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.16);
 }
 
 .meaning-card:hover::after {
@@ -376,8 +379,8 @@ body {
 
 .card-gradient-red {
     border-color: var(--glass-red-border);
-    background: linear-gradient(135deg, rgba(210, 31, 60, 0.2) 0%, rgba(26, 26, 36, 0.95) 100%);
-    box-shadow: 0 10px 25px rgba(210, 31, 60, 0.08);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(249, 115, 22, 0.09) 100%);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
 }
 
 .card-icon {
@@ -463,7 +466,7 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--text-muted);
-    background: linear-gradient(135deg, rgba(26, 26, 36, 0.9) 0%, rgba(210, 31, 60, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(26, 26, 36, 0.9) 0%, rgba(37, 99, 235, 0.12) 100%);
     gap: 10px;
     padding: 15px;
     text-align: center;
@@ -485,7 +488,7 @@ body {
 }
 
 .gallery-item:hover .placeholder-img {
-    background: linear-gradient(135deg, rgba(210, 31, 60, 0.25) 0%, rgba(26, 26, 36, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.22) 0%, rgba(249, 115, 22, 0.1) 100%);
     color: var(--text-light);
 }
 
@@ -619,7 +622,7 @@ body {
 .cup-roadmap-step.active {
     color: var(--text-light);
     border-color: var(--primary-red);
-    background: rgba(210, 31, 60, 0.18);
+    background: rgba(37, 99, 235, 0.18);
 }
 
 .cup-roadmap-step.done span {
@@ -631,12 +634,15 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .game-container {
     display: none;
-    width: 100%;
-    max-width: 650px;
+    width: min(100%, 650px);
+    max-width: calc(100vw - 32px);
+    margin: 0 auto;
     background: var(--bg-card-dark);
     border: 1px solid var(--glass-white-border);
     border-radius: var(--border-radius-lg);
@@ -648,9 +654,19 @@ body {
     display: block;
 }
 
+.cup-game-slide {
+    justify-content: center;
+    align-items: center;
+}
+
+.cup-game-slide .game-container {
+    align-self: center;
+}
+
 .game-hud {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--glass-white-border);
     padding: 12px 20px;
@@ -682,6 +698,8 @@ body {
     border: 2px solid var(--glass-white-border);
     background: #081c08; /* Dunkelgrüner Rasen für Spiele */
     width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 canvas {
@@ -898,6 +916,21 @@ canvas {
     .cup-name-row {
         grid-template-columns: 1fr;
     }
+
+    .game-container {
+        padding: 16px;
+        max-width: calc(100vw - 24px);
+    }
+
+    .game-hud {
+        padding: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hud-item {
+        min-width: 84px;
+    }
 }
 
 /* --- Slide 5: Chat / Guestbook --- */
@@ -1105,7 +1138,7 @@ canvas {
 
 @keyframes pulse-glow {
     0% { box-shadow: 0 0 5px var(--primary-red-glow); }
-    50% { box-shadow: 0 0 15px rgba(210, 31, 60, 0.7); }
+    50% { box-shadow: 0 0 15px var(--accent-orange-glow); }
     100% { box-shadow: 0 0 5px var(--primary-red-glow); }
 }
 

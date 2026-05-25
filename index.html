@@ -114,9 +114,9 @@
                 <div class="cup-roadmap" id="cup-roadmap">
                     <div class="cup-roadmap-step active" data-cup-step="penalty"><span>1</span> Union</div>
                     <div class="cup-roadmap-step" data-cup-step="keepup"><span>2</span> Bayern</div>
-                    <div class="cup-roadmap-step" data-cup-step="tennis"><span>3</span> Tennis</div>
-                    <div class="cup-roadmap-step" data-cup-step="hockey"><span>4</span> Eishockey</div>
-                    <div class="cup-roadmap-step" data-cup-step="final"><span>5</span> Finale</div>
+                    <div class="cup-roadmap-step" data-cup-step="tennis"><span>3</span> Fietje</div>
+                    <div class="cup-roadmap-step" data-cup-step="hockey"><span>4</span> Eisbären</div>
+                    <div class="cup-roadmap-step" data-cup-step="final"><span>5</span> Siegerehrung</div>
                 </div>
                 <button class="btn btn-primary" onclick="window.gameEngine.startCup()"><i class="fa-solid fa-play"></i> Fietje-Cup starten</button>
                 <div class="game-selector legacy-game-selector" aria-hidden="true">
@@ -127,10 +127,10 @@
                         <i class="fa-solid fa-circle-nodes"></i> Bayern: Mia-San-Header
                     </button>
                     <button class="game-tab-btn" id="tab-tennis" onclick="window.gameEngine.switchGame('tennis')">
-                        <i class="fa-solid fa-table-tennis-paddle-ball"></i> Tennis: Matchball
+                        <i class="fa-solid fa-table-tennis-paddle-ball"></i> Fietje: Matchball
                     </button>
                     <button class="game-tab-btn" id="tab-hockey" onclick="window.gameEngine.switchGame('hockey')">
-                        <i class="fa-solid fa-hockey-puck"></i> Eishockey: Eis-Goalie
+                        <i class="fa-solid fa-hockey-puck"></i> Eisbären: Eis-Goalie
                     </button>
                 </div>
             </div>
@@ -191,7 +191,7 @@
                         <canvas id="tennis-canvas" width="600" height="400"></canvas>
                         <div class="game-overlay game-overlay-start" id="tennis-overlay">
                             <div class="overlay-content">
-                                <h3 id="tennis-overlay-title">Matchball</h3>
+                                <h3 id="tennis-overlay-title">Fietje</h3>
                                 <p id="tennis-overlay-desc">Halte die Tennis-Rally am Laufen! Triff die Bälle mit deinem Schläger und sammle Bonussterne.</p>
                                 <button class="btn btn-primary" onclick="window.gameEngine.startTennisGame()">Spiel starten</button>
                             </div>
@@ -213,7 +213,7 @@
                         <canvas id="hockey-canvas" width="600" height="400"></canvas>
                         <div class="game-overlay game-overlay-start" id="hockey-overlay">
                             <div class="overlay-content">
-                                <h3 id="hockey-overlay-title">Eis-Goalie</h3>
+                                <h3 id="hockey-overlay-title">Eisbären</h3>
                                 <p id="hockey-overlay-desc">Beschütze das Tor! Fange Pucks, sammle Pokale und weiche Strafzeiten aus.</p>
                                 <button class="btn btn-primary" onclick="window.gameEngine.startHockeyGame()">Spiel starten</button>
                             </div>
@@ -236,10 +236,10 @@
             </div>
         </section>
 
-        <!-- Slide 5: Cup Finale -->
+        <!-- Slide 5: Cup Siegerehrung -->
         <section class="slide" id="slide-cup-final">
             <div class="section-header">
-                <h2><i class="fa-solid fa-ranking-star"></i> Fietje-Cup Finale</h2>
+                <h2><i class="fa-solid fa-ranking-star"></i> Fietje-Cup Siegerehrung</h2>
                 <p>Alle vier Spiele sind gespielt. Jetzt kommt der Name ins Ranking.</p>
             </div>
             <div class="final-score-card">
@@ -263,9 +263,6 @@
             <div class="section-header">
                 <h2><i class="fa-solid fa-comments"></i> Gratulanten-Chat</h2>
                 <p>Hinterlasse Fietje einen lieben Gruß zum Geburtstag! Jede Nachricht wird sofort angezeigt.</p>
-                <div class="chat-status-badge offline" id="chat-mode-indicator">
-                    <i class="fa-solid fa-circle"></i> <span id="chat-mode-text">Demo-Modus (Lokal)</span>
-                </div>
             </div>
 
             <div class="chat-layout">
