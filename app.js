@@ -206,11 +206,10 @@ async function loadGallery() {
     const resetBtn = document.getElementById('btn-reset-gallery');
     resetBtn.style.display = appState.uploadedImages.length > 0 ? 'inline-flex' : 'none';
 
-    // Anzeige: erst feste Bilder, dann hochgeladene, dann Platzhalter bis MAX_GALLERY
+    // Anzeige: feste Bilder + hochgeladene Bilder, keine leeren Platzhalter (max MAX_GALLERY)
     const tiles = [];
     PRESET_IMAGES.forEach(src => tiles.push({ type: 'img', src }));
     appState.uploadedImages.forEach(src => tiles.push({ type: 'img', src }));
-    while (tiles.length < MAX_GALLERY) tiles.push({ type: 'placeholder' });
     tiles.length = Math.min(tiles.length, MAX_GALLERY);
 
     tiles.forEach((tile, i) => {
