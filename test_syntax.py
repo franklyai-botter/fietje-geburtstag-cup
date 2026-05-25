@@ -89,6 +89,8 @@ class FietjeWebsiteTests(unittest.TestCase):
         self.assertRegex(self.css, r"\.game-container\s*\{[^}]*display:\s*none", "Inaktive Spiele muessen versteckt sein")
         self.assertRegex(self.css, r"\.game-container\.active\s*\{[^}]*display:\s*block", "Aktives Spiel muss sichtbar sein")
         self.assertRegex(self.css, r"#confetti-canvas\s*\{[^}]*pointer-events:\s*none", "Konfetti darf Klicks nicht blockieren")
+        self.assertIn(".game-overlay-start .overlay-content h3", self.css)
+        self.assertIn('class="game-overlay game-overlay-start"', self.html)
 
     def test_switch_game_regression_guards(self):
         switch_block = self._extract_method("switchGame")

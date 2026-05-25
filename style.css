@@ -723,6 +723,10 @@ canvas {
     text-transform: uppercase;
 }
 
+.game-overlay-start .overlay-content h3 {
+    display: none;
+}
+
 .overlay-content p {
     color: var(--text-muted);
     margin-bottom: 25px;

@@ -344,6 +344,7 @@ window.gameEngine = {
         if (!overlay || !title || !desc) return;
 
         if (state === 'menu') {
+            overlay.classList.add('game-overlay-start');
             overlay.style.display = 'flex';
             title.textContent = copy[gameType][0];
             desc.textContent = copy[gameType][1];
@@ -357,6 +358,7 @@ window.gameEngine = {
                 };
             }
         } else if (state === 'playing' || state === 'shooting' || state === 'goal' || state === 'saved') {
+            overlay.classList.remove('game-overlay-start');
             overlay.style.display = 'none';
         }
     },
@@ -473,6 +475,7 @@ window.gameEngine = {
         this.completeCupStage(gameType, this[gameType].score || 0);
 
         overlay.style.display = 'flex';
+        overlay.classList.remove('game-overlay-start');
         title.textContent = titleText;
         desc.innerHTML = bodyHtml;
         button.textContent = isFinalGame ? 'Zum Finale' : 'Naechste Station';
@@ -783,6 +786,7 @@ window.gameEngine = {
             const desc = document.getElementById('penalty-overlay-desc');
 
             overlay.style.display = 'flex';
+            overlay.classList.remove('game-overlay-start');
             title.textContent = "Spiel beendet!";
             overlay.querySelector('button').textContent = 'Naechste Station';
             overlay.querySelector('button').onclick = () => this.goToNextCupStage('penalty');
@@ -1274,6 +1278,7 @@ window.gameEngine = {
         const desc = document.getElementById('keepup-overlay-desc');
 
         overlay.style.display = 'flex';
+        overlay.classList.remove('game-overlay-start');
         title.textContent = "Abpfiff!";
         overlay.querySelector('button').textContent = 'Naechste Station';
         overlay.querySelector('button').onclick = () => this.goToNextCupStage('keepup');
@@ -1628,6 +1633,7 @@ window.gameEngine = {
         this.completeCupStage('tennis', this.tennis.score);
 
         const overlay = document.getElementById('tennis-overlay');
+        overlay.classList.remove('game-overlay-start');
         document.getElementById('tennis-overlay-title').textContent = 'Match vorbei!';
         document.getElementById('tennis-overlay-desc').innerHTML = `Du hast <strong>${this.tennis.score} Punkte</strong> im Tennis-Match geholt.`;
         overlay.querySelector('button').textContent = 'Naechste Station';
@@ -1830,6 +1836,7 @@ window.gameEngine = {
         this.completeCupStage('hockey', this.hockey.score);
 
         const overlay = document.getElementById('hockey-overlay');
+        overlay.classList.remove('game-overlay-start');
         document.getElementById('hockey-overlay-title').textContent = 'Abpfiff auf dem Eis!';
         document.getElementById('hockey-overlay-desc').innerHTML = `Du hast <strong>${this.hockey.score} Punkte</strong> als Eis-Goalie geholt.`;
         overlay.querySelector('button').textContent = 'Zum Finale';
